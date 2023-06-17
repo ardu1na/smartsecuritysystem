@@ -1,0 +1,56 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+
+{% block additional_css %}
+{% endblock %}
+
+
+{% block 'top' %}
+{% endblock %}
+
+
+
+
+{% block content %}
+
+    
+            <div class="col-12 d-flex justify-content-center align-items-center mt-4">
+
+
+                <div class="col-md-6 ">
+
+                    <div class="text-center error-page mt-5 ">
+
+                        <h6 class="fs-4 text-white">Aquí estará (si querés) tu sitio web para el público</h6>
+
+                        <div class="media col-4 m-auto">
+                            <img src="{% static 'dashboard/images/planb.png' %}" class="img-fluid" >
+
+                        </div>
+
+                        
+
+                        
+                        <div class="mt-4 ">
+
+                            <a class="btn btn-primary my-5 fs-3" href="{% url 'dashboard:index' %}">Ir al Sistema</a>
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+{% endblock %}
+
+
+{% block additional_js %}
+
+
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'layout/base.html' %}
+
+{% load static widget_tweaks %}
+
+{% block additional_css %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+
+
+<!-- MAIN add alarma vecinal -->
+
+
+
+
+    <div class="row">
+        <div class="row page-titles">
+            <ol class="breadcrumb">        
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">Inicio</a></li>
+                <li class="breadcrumb-item active"><a>ADD ALARMA VECINAL</a></li>
+            </ol>
+        </div>
+       
+        
+        <div class="col-xl-12">            
+            <div class="card students-list">
+                <div class="card-header">
+                    <h3 class="card-title">Crear ALARMA VECINAL </h3>        
+                </div>
+
+                    <form  method="post">
+                    {% csrf_token %}
+                        <div class="modal-body">
+                            <div class="pt-1 pb-4">
+                                <div class="formcontrol">                                         
+                                    <div class="form-floating mb-3">
+                                    
+        
+                                        <div class="form-group my-3">
+                                            
+                                            {{addform.nombre}}
+                                        </div>
+                                        <div class="form-group my-3">
+                                            {{addform.google_account}}
+                                        </div>
+
+
+                                        <div class="form-group my-3">
+                                            {{addform.altitud}}
+                                        </div>
+
+
+                                        <div class="form-group my-3">
+                                            {{addform.latitud}}
+                                        </div>
+
+
+                                        <div class="form-group my-3">
+                                            {{addform.area}}
+                                        </div>
+
+
+                                        <div class="form-group my-3">
+                                            {{addform.descripcion}}
+                                        </div>
+
+                                        <div class="row form-group my-3">
+                                            <div class="bootstrap-popover d-inline-block col-9">
+
+                                             {{addform.whatsapp_group}}
+                                            </div>
+
+                                            <div class="bootstrap-popover d-inline-block col-3">
+                                                <button type="button" class="btn btn-primary px-4 " data-bs-container="body" data-bs-toggle="popover" data-bs-placement="right"
+                                                
+                                                data-bs-content=
+                                                "
+                                                  [1]  Ve al Grupo de WhatsApp y toca los puntitos . 
+
+                                               . . . [2]  . . . . Ahora en  < Participantes > .  .  . . 
+
+                                                . .  . . . . . . . . [3]   Busca el  . . . . . < Enlace de invitación al Grupo > 
+                                                
+                                                [4] . . . .  Encuentra el ID al final del link: . . . . . chat.whatsapp.com/'<ID_de_tu_grupo>'  . . " 
+                                                
+                                                title="ID del Grupo de WhatsApp ">
+
+                                                    ¿cómo lo consigo?</button>
+                                            </div>
+
+                                        </div>
+
+                                        
+        
+                                    </div>
+                                </div>       
+        
+                                
+                            </div>
+                            <div class="form-floating my-3 text-center">
+                                <button type="submit" class=" fs-3 shadow-sm btn btn-secondary" name="addnew"><i class="fa fa-plus me-2 fs-3 me-3"></i> Agregar </button>
+                            </div>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+<!-- end MAIN usuarios -->
+
+
+{% endblock %}
+
+
+{% block additional_js %}
+
+
+
+
+
+
+
+
+{% endblock %}

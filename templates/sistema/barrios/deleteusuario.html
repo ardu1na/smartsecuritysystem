@@ -1,0 +1,20 @@
+<!-- Delete vivienda Modal -->
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+               
+            <div class="modal-body text-center py-5">
+                <h4 class="fs-2 my-2">Deleting {{usuario.get_nombre_completo}}...</h4>
+                <h4 class="fs-2 my-2">¿Are you sure?</h4>
+
+                <div class="form-floating mt-5">
+                    <a href="{% url 'dashboard:vivienda' pk=usuario.vivienda.id %}" class="btn fs-7 mx-2">
+                        <i class="fa-solid fa-arrow-left me-2 fs-7"></i> Nop, go back.
+                    </a>
+                    <a href="{% url 'dashboard:usuariodelete' pk=usuario.id %}" class="shadow-sm btn btn-danger fs-6 p-3">
+                        <i class="fa-regular fa-trash-can fs-5 me-1"></i> Yes!
+                    </a>
+                </div>
+            </div>
+
+    </div>
+</div>

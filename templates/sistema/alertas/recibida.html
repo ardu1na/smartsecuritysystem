@@ -1,0 +1,53 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+
+{% block 'top' %}
+{% endblock %}
+
+
+
+
+{% block 'content' %}
+
+    
+            <div class="col-12 d-flex justify-content-center align-items-center mt-4">
+
+
+                <div class="col-md-6 ">
+
+                    <div class="text-center error-page mt-5 ">
+
+                        <h6 class="fs-4 text-white">Gracias {{alerta.miembro.nombre}} por confiar en PlanB</h6>
+
+                        <div class="media col-4 m-auto">
+                            <img src="{% static 'dashboard/images/planb.png' %}" class="img-fluid" >
+                        </div>
+
+                        <h1 class="error-text fw-bold my-4 ">{{alerta.tipo}}</h1>
+
+                        <h4>Alerta Enviada <i class="fa fa-thumbs-up text-danger mt-4"></i> </h4>
+
+
+                        <div class="mt-4 ">
+
+                            <a class="btn btn-success my-5 fs-3" href="https://chat.whatsapp.com/{{alerta.miembro.vivienda.alarma_vecinal.whatsapp_group}}">Abrir Grupo<i class="fa-brands fa-whatsapp fs-2 ps-3"></i></a>
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+{% endblock %}
+
+
+{% block additional_js %}
+
+
+{% endblock %}

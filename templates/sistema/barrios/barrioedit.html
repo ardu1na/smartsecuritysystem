@@ -1,0 +1,203 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+
+{% block additional_css %}
+{% endblock %}
+
+{% block content %}
+
+<!-- modal delete barrio -->
+<div class="modal" id="deletebarrio{{barrio.id}}">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-5">
+                <h4 class="fs-2 my-2">Deleting {{barrio}} permanently...</h4>
+                <h4 class="fs-2 my-2">¿Are you sure?</h4>
+
+                <div class="form-floating mt-5">
+                    <a href="./" class="btn fs-7 mx-2">
+                        <i class="fa-solid fa-arrow-left me-2 fs-7"></i> Nop, go back.
+                    </a>
+                    <a href="{% url 'dashboard:barriodelete' pk=barrio.id %}" class="shadow-sm btn btn-danger fs-6 p-3">
+                        <i class="fa-regular fa-trash-can fs-5 me-1"></i> Yes!
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- MAIN -->
+
+
+        <div class="row page-titles">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:barrios' %}">Inicio</a></li>
+
+                <li class="breadcrumb-item active"><a href="{% url 'dashboard:barrio' pk=barrio.id %}"> {{barrio}} </a> </li>
+            </ol>
+        </div>
+       
+        <div class="row">
+            <div class="col-xl-12 col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">{{barrio}}</h3>
+                        <div class="form-floating pt-4 my-3 d-flex flex-row-reverse">
+                                                
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletebarrio{{barrio.id}}">Delete<span class="btn-icon-end">
+                                <i class="fa-solid fa-trash fs-7"></i></span></button>
+                        </div>
+                                              
+                    </div>
+                    
+                    <div class="card-body">
+
+                        <div class="default-tab">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#home"><i class="la la-user me-2"></i> INFORMACIÓN</a>
+                                </li>
+                                
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#contact"><i class="las la-comment-dollar me-2"></i>...</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="home" role="tabpanel">
+                                    <div class="pt-4">
+                                        <div class="basic-form">
+                                            <form method="post">
+                                                {% csrf_token %}
+                                                    <div class="pt-1 pb-4">
+                                                        <div class="formcontrol">         
+
+                                                            <div class="form-floating mb-3">
+
+                                                                     
+                                                                              
+                                        
+                                                                <div class="form-group my-3">
+                                                                    {{editform.nombre}}
+                                                                </div>
+
+                                                                <div class="form-group my-3">
+                                                                    {{editform.google_account}}
+                                                                </div>
+
+                                                                <div class="form-group my-3">
+                                                                    {{editform.altitud}}
+                                                                </div>
+                        
+                        
+                                                                <div class="form-group my-3">
+                                                                    {{editform.latitud}}
+                                                                </div>
+                        
+                        
+                                                                <div class="form-group my-3">
+                                                                    {{editform.area}}
+                                                                </div>
+                        
+
+                                                                <div class="form-group my-3">
+                                                                    {{editform.descripcion}}
+                                                                </div>
+
+
+                                                                <div class="row form-group my-3">
+                                                                    <div class="bootstrap-popover d-inline-block col-9">
+
+                                                                     {{editform.whatsapp_group}}
+                                                                    </div>
+
+                                                                    <div class="bootstrap-popover d-inline-block col-3">
+                                                                        <button type="button" class="btn btn-primary px-4 " data-bs-container="body" data-bs-toggle="popover" data-bs-placement="right"
+                                                                        
+                                                                        data-bs-content=
+                                                                        "
+                                                                          [1]  Ve al Grupo de WhatsApp y toca los puntitos . 
+
+                                                                       . . . [2]  . . . . Ahora en  < Participantes > .  .  . . 
+
+                                                                        . .  . . . . . . . . [3]   Busca el  . . . . . < Enlace de invitación al Grupo > 
+                                                                        
+                                                                        [4] . . . .  Encuentra el ID al final del link: . . . . . chat.whatsapp.com/'<ID_de_tu_grupo>'  . . " 
+                                                                        
+                                                                        title="ID del Grupo de WhatsApp ">
+                        
+                                                                            ¿cómo lo consigo?</button>
+                                                                    </div>
+
+                                                                </div>
+
+
+
+                                                                           
+                                                            </div>
+                                                        </div>       
+                
+                                                        <div class="form-floating pt-4 my-3 d-flex flex-row-reverse">
+                                                            <button type="submit" class="shadow-sm btn btn-secondary fs-3 " name="editbarrio"><i class="fa-solid fa-floppy-disk pe-3"></i> Guardar cambios </button>
+
+                                                            <a href="{% url 'dashboard:barrios' %}" class="btn fs-7 mx-2">
+                                                                <i class="fa-solid fa-arrow-left me-2 fs-7"></i> Volver
+                                                            </a>
+                                                        </div>
+                
+                                                    </div>
+                                            </form>
+                                            
+                
+                                           
+                
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-pane fade" id="contact">
+                                    <div class="pt-4">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                       
+                    </div>
+
+
+                    
+
+                    
+
+                    
+                </div>
+                
+            </div>
+        </div>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+{% block additional_js %}
+
+
+<!-- NEWMODAL -->
+<script>
+    const deletebarrio = new bootstrap.Modal('#deletebarrio',   {keyboard: true}    )
+</script>
+
+{% endblock %}
