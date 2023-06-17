@@ -89,22 +89,26 @@ def alertas(request, pk=None):
     
     
     
-    
+@login_required  
 def sos(request): 
     usuario = Miembro.objects.get(user=request.user)
     alerta = AlarmaEvent.objects.create(miembro=usuario, tipo="SOS")
     return redirect('success', pk=alerta.pk)
 
+@login_required
 def fuego(request):
     usuario = Miembro.objects.get(user=request.user)
     alerta = AlarmaEvent.objects.create(miembro=usuario, tipo="Fuego")
     return redirect('success', pk=alerta.pk)
 
+
+@login_required
 def emergencia(request):
     usuario = Miembro.objects.get(user=request.user)
     alerta = AlarmaEvent.objects.create(miembro=usuario, tipo="Emergencia")
     return redirect('success', pk=alerta.pk)
 
+@login_required
 def success (request, pk):
     alerta = AlarmaEvent.objects.get(id=pk)
     template_name = 'sistema/alertas/recibida.html'
@@ -125,12 +129,12 @@ def planb(request):
 @login_required
 def index(request):
     template_name = 'index.html'
-    barrios = AlarmaVecinal.objects.filter(state="Yes")
+    barrios = AlarmaVecinal.objects.filter(state=True)
     alarmas_this_m = AlarmaEvent.objects.filter(datetime__month=today.month, datetime__year=today.year)
     alarmas = AlarmaEvent.objects.all()
     ultima = alarmas.last()
-    usuarios = Miembro.objects.filter(state="Yes")
-    viviendas = Vivienda.objects.filter(state="Yes")
+    usuarios = Miembro.objects.filter(state=True)
+    viviendas = Vivienda.objects.filter(state=True)
     e_this_m = alarmas_this_m.filter(tipo="Emergencia")
     e_last = alarmas.filter(tipo="Emergencia").last()   
     s_this_m = alarmas_this_m.filter(tipo="SOS")
@@ -171,10 +175,10 @@ def index(request):
 def barrios_list(request):
     template_name = 'sistema/barrios/barrios.html'
     
-    barrios=AlarmaVecinal.objects.filter(state="Yes")
+    barrios=AlarmaVecinal.objects.filter(state=True)
     alertas = AlarmaEvent.objects.filter(datetime__year=today.year, datetime__month=today.month)
-    usuarios=Miembro.objects.filter(state="Yes")
-    viviendas= Vivienda.objects.filter(state="Yes")
+    usuarios=Miembro.objects.filter(state=True)
+    viviendas= Vivienda.objects.filter(state=True)
     ultima = AlarmaEvent.objects.last()
 
     
@@ -205,7 +209,7 @@ def barrios_list(request):
 @login_required
 def barrio_delete(request, pk):
     barrio = get_object_or_404(AlarmaVecinal, id=pk)
-    barrio.state = "No"
+    barrio.state = False
     barrio.save()
     return redirect('barrios')
 
@@ -287,7 +291,7 @@ def barrio_detail(request, pk):
 def vivienda_delete(request, pk):
     
     vivienda = get_object_or_404(Vivienda, id=pk)
-    vivienda.state = "No"
+    vivienda.state = False
     vivienda.save()
     return redirect('barrio', pk=vivienda.alarma_vecinal.pk)
 
@@ -296,7 +300,7 @@ def vivienda_delete(request, pk):
 def vivienda_detail(request, pk):
     
     vivienda = get_object_or_404(Vivienda, id=pk)
-    usuarios = vivienda.miembros.filter(state="Yes")
+    usuarios = vivienda.miembros.filter(state=True)
     alarmas = AlarmaEvent.objects.filter(miembro__vivienda= vivienda.pk)
     ultima = alarmas.last()
     e = alarmas.filter(tipo="Emergencia")
@@ -409,7 +413,7 @@ def users_list(request, pk=None):
     else:
                 
         
-        usuarios = Miembro.objects.filter(state="Yes")
+        usuarios = Miembro.objects.filter(state=True)
         context ={
         "usuarios" : usuarios,  
         }
@@ -424,8 +428,8 @@ def users_list(request, pk=None):
 
 @login_required
 def useradd(request):
-    viviendas = Vivienda.objects.filter(state="Yes")
-    alarmas = AlarmaVecinal.objects.filter(state="Yes")
+    viviendas = Vivienda.objects.filter(state=True)
+    alarmas = AlarmaVecinal.objects.filter(state=True)
 
     adduser = NewUser()
     
@@ -476,7 +480,7 @@ def useradd(request):
 
 @login_required
 def viviendaadd(request):
-    alarmas = AlarmaVecinal.objects.filter(state="Yes")
+    alarmas = AlarmaVecinal.objects.filter(state=True)
 
     addvivienda = NewVivienda()
     
@@ -580,7 +584,7 @@ def usuario_detail(request, pk):
 def usuario_delete(request, pk):
     
     usuario = get_object_or_404(Miembro, id=pk)
-    usuario.state = "No"
+    usuario.state = False
     usuario.save()
     return redirect('vivienda', pk=usuario.vivienda.pk)
 ########################################################################################################################

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 
-from dashboard.resources import AlarmaEventR, AlarmaVecinalR, MiembroR, ViviendaR
+from alarms.resources import AlarmaEventR, AlarmaVecinalR, MiembroR, ViviendaR
 from alarms.models import *
 
 class UsuariosInline(admin.StackedInline):

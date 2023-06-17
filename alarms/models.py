@@ -6,6 +6,13 @@ from django.contrib.auth.models import User
 
 
 
+
+############## TODO
+## EN VIVIENDA AÑADIR OPCIONES A PROVINCIA
+
+
+
+
 today = date.today()
 
 class AlarmaEvent(models.Model):
@@ -58,13 +65,8 @@ class AlarmaVecinal(models.Model):
     whatsapp_group = models.CharField(max_length=300, blank=True, null=True)
     
     created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)  
-    YES="Yes"
-    NO="No"
-    STATE_CHOICES = [
-        (YES, ('Yes')),
-        (NO, ('No')),]    
-    state = models.CharField(max_length=50, choices=STATE_CHOICES, default="Yes")
+    updated_at = models.DateField(auto_now=True)
+    state = models.BooleanField(default=True)
     deleted_at = models.DateField(blank=True, null=True)
     
     
@@ -73,10 +75,9 @@ class AlarmaVecinal(models.Model):
     
     
     def save(self, *args, **kwargs):
-        if self.state == "No":
-            self.deleted_at = date.today()
+        if self.state == False:
+            self.deleted_at = today
             
-        created = not self.pk 
         super().save(*args, **kwargs)  
 
     
@@ -92,20 +93,20 @@ class AlarmaVecinal(models.Model):
     @property
     def get_n_usuarios(self):
         usuarios = []
-        viviendas = self.viviendas.filter(state="Yes")
+        viviendas = self.viviendas.filter(state=True)
         for vivienda in viviendas:
-            for usuario in vivienda.miembros.filter(state="Yes"):
+            for usuario in vivienda.miembros.filter(state=True):
                 usuarios.append(usuario)
         return len(usuarios)  
     
     @property
     def get_n_viviendas(self):
-        viviendas = self.viviendas.filter(state="Yes")
+        viviendas = self.viviendas.filter(state=True)
         return len(viviendas)
 
     @property
     def get_viviendas(self):
-        viviendas = self.viviendas.filter(state="Yes")
+        viviendas = self.viviendas.filter(state=True)
         return viviendas
     
     
@@ -166,7 +167,7 @@ class Miembro(models.Model):
         User,
         null=True, blank=True,
         on_delete=models.CASCADE,
-        related_name="worker",
+        related_name="miembro",
         verbose_name="USERNAME",
         editable=False)
     
@@ -196,17 +197,11 @@ class Miembro(models.Model):
     
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-    
-    YES="Yes"
-    NO="No"
-    STATE_CHOICES = [
-        (YES, ('Yes')),
-        (NO, ('No')),]    
-    state = models.CharField(max_length=50, choices=STATE_CHOICES, default="Yes")
+  
+    state = models.BooleanField(default=True)
     deleted_at = models.DateField(blank=True, null=True)
 
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)   
     email = models.EmailField(unique=True, blank=False, null=False)  
     
     
@@ -214,9 +209,8 @@ class Miembro(models.Model):
     
     def save(self, *args, **kwargs):
         
-        if self.state == "No":
-            self.deleted_at = date.today()
-            
+        if self.state == False:
+            self.deleted_at = today            
             
         if not self.user: 
             self.user = User.objects.create_user(
@@ -276,8 +270,7 @@ class Miembro(models.Model):
     @property
     def get_edad(self):
         if self.fecha_de_nacimiento:
-            hoy = date.today()
-            edad = (hoy - self.fecha_de_nacimiento).days // 365.25
+            edad = (today - self.fecha_de_nacimiento).days // 365.25
             return int(edad)
         else:
             return None
@@ -328,12 +321,8 @@ class Vivienda(models.Model):
 
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-    YES="Yes"
-    NO="No"
-    STATE_CHOICES = [
-        (YES, ('Yes')),
-        (NO, ('No')),]    
-    state = models.CharField(max_length=50, choices=STATE_CHOICES, default="Yes")
+    
+    state = models.BooleanField(default=True)
     deleted_at = models.DateField(blank=True, null=True)
 
 
@@ -348,19 +337,19 @@ class Vivienda(models.Model):
 
     @property
     def get_miembros_string(self, *args, **kwargs):
-        miembros = Miembro.objects.filter(vivienda__id=self.id, state="Yes")
+        miembros = Miembro.objects.filter(vivienda__id=self.id, state=True)
         nombres = ["{} {}".format(miembro.nombre, miembro.apellido) for miembro in miembros]
         return ", ".join(nombres)
     
     
     @property
     def get_miembros(self, *args, **kwargs):
-        miembros = Miembro.objects.filter(vivienda__id=self.id, state="Yes")
+        miembros = Miembro.objects.filter(vivienda__id=self.id, state=True)
         return miembros
     
     @property
     def get_miembros_number(self, *args, **kwargs):
-        miembros = Miembro.objects.filter(vivienda__id=self.id, state="Yes")
+        miembros = Miembro.objects.filter(vivienda__id=self.id, state=True)
         return len(miembros)
     
     @property
@@ -386,8 +375,8 @@ class Vivienda(models.Model):
         return f"{self.calle} {self.numero}"
     
     def save(self, *args, **kwargs):
-        if self.state == "No":
-            self.deleted_at = date.today()
+        if self.state == False:
+            self.deleted_at = today
         
         if self.sin_numero == True:
             self.numero = 0
