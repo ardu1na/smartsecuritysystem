@@ -16,8 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from alarms.views import sos, fuego, emergencia, success
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('alarms.urls'))
+    path('', include('alarms.urls')),
+    path('s/', sos, name="sos"), 
+    path('e/', emergencia, name="emergencia"), 
+    path('f/', fuego, name="fuego"),  
+    
+    path('alerta-enviada/<uuid:pk>/', success, name="success"),  
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

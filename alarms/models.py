@@ -2,10 +2,9 @@ import uuid
 from datetime import date
 from PIL import Image
 from django.db import models
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
 
 
-from dashboard.users.models import CustomUser
 
 today = date.today()
 
@@ -163,6 +162,13 @@ class AlarmaVecinal(models.Model):
     
     
 class Miembro(models.Model):
+    user = models.OneToOneField(
+        User,
+        null=True, blank=True,
+        on_delete=models.CASCADE,
+        related_name="worker",
+        verbose_name="USERNAME",
+        editable=False)
     
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)   
@@ -200,28 +206,34 @@ class Miembro(models.Model):
     deleted_at = models.DateField(blank=True, null=True)
 
 
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True)   
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)   
     email = models.EmailField(unique=True, blank=False, null=False)  
     
     
+    
+    
     def save(self, *args, **kwargs):
+        
         if self.state == "No":
             self.deleted_at = date.today()
             
-        super().save(*args, **kwargs)  
-
-        if not self.user:
-            new_user = CustomUser.objects.create(              # hacer doc para esto
-                email=self.email,
-                password=f"{self.nombre.lower().replace(' ', '_')}_{self.apellido.lower().replace(' ', '_')}",
-                is_active=True,
-                is_staff= True
+            
+        if not self.user: 
+            self.user = User.objects.create_user(
+                username = self.email.split("@")[0],
+                email = self.email,
+                password = "planB",
+                first_name = '',
+                last_name = '',
+                is_active = True,
+                is_staff = True,
             )
-            self.user = new_user
-                  
-        super().save(*args, **kwargs)       
-        
-        if self.user.groups == None and self.vivienda.alarma_vecinal:
+            self.id = self.user.id
+            self.user.save()
+        super().save(*args, **kwargs)
+
+
+        """if self.user.groups == None and self.vivienda.alarma_vecinal:
             try:
                 group = Group.objects.get(name=self.vivienda.alarma_vecinal.nombre)
                 
@@ -233,7 +245,7 @@ class Miembro(models.Model):
             user.groups.add(group)
             user.save()
         
-        super().save(*args, **kwargs)  
+        super().save(*args, **kwargs) """ 
         
         
         

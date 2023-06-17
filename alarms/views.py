@@ -29,7 +29,7 @@ class AlarmaEventAPIView(generics.RetrieveAPIView):
 # ajax
 def latest(request):
     ultima = AlarmaEvent.objects.last()
-    userurl = reverse('dashboard:usuario', args=[ultima.miembro.id])
+    userurl = reverse('usuario', args=[ultima.miembro.id])
 
     data = {
         'miembro': str(ultima.miembro),
@@ -54,9 +54,9 @@ def has_new_data(request):
     return JsonResponse(data)
 
 ###
-@login_required(login_url='dashboard:login')
+@login_required
 def alertas(request, pk=None):
-    template_name = 'dashboard/sistema/alertas/alertas.html'
+    template_name = 'sistema/alertas/alertas.html'
 
     if pk:
         alertas = AlarmaEvent.objects.filter(miembro__id=pk).order_by('-datetime')
@@ -107,7 +107,7 @@ def emergencia(request):
 
 def success (request, pk):
     alerta = AlarmaEvent.objects.get(id=pk)
-    template_name = 'dashboard/sistema/alertas/recibida.html'
+    template_name = 'sistema/alertas/recibida.html'
     context={
         "alerta" : alerta,     
     }
@@ -117,14 +117,14 @@ def success (request, pk):
 
 
 def planb(request):
-    return render (request, 'dashboard/planb.html', {})
+    return render (request, 'planb.html', {})
 
 ############################################################################################################
 #### sistema de alarmas barriales ######
 
-@login_required(login_url='dashboard:login')
+@login_required
 def index(request):
-    template_name = 'dashboard/index.html'
+    template_name = 'index.html'
     barrios = AlarmaVecinal.objects.filter(state="Yes")
     alarmas_this_m = AlarmaEvent.objects.filter(datetime__month=today.month, datetime__year=today.year)
     alarmas = AlarmaEvent.objects.all()
@@ -167,9 +167,9 @@ def index(request):
 ########################################################################
 ########################### crud de barrios #######################################
 
-@login_required(login_url='dashboard:login')
+@login_required
 def barrios_list(request):
-    template_name = 'dashboard/sistema/barrios/barrios.html'
+    template_name = 'sistema/barrios/barrios.html'
     
     barrios=AlarmaVecinal.objects.filter(state="Yes")
     alertas = AlarmaEvent.objects.filter(datetime__year=today.year, datetime__month=today.month)
@@ -186,7 +186,7 @@ def barrios_list(request):
             addform = NewAlarmaVecinalForm(request.POST)
             if addform.is_valid():
                 newgrupo = addform.save()
-                return redirect('dashboard:barrios')
+                return redirect('barrios')
             else:
                 return HttpResponse("Something wrong with the form")
     context={
@@ -202,19 +202,19 @@ def barrios_list(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url='dashboard:login')
+@login_required
 def barrio_delete(request, pk):
     barrio = get_object_or_404(AlarmaVecinal, id=pk)
     barrio.state = "No"
     barrio.save()
-    return redirect('dashboard:barrios')
+    return redirect('barrios')
 
 ############################################################################################################
 ########################### crud de viviendas ###########################
 
-@login_required(login_url='dashboard:login')
+@login_required
 def barrio_detail(request, pk): 
-    template_name = 'dashboard/sistema/barrios/barrio.html'
+    template_name = 'sistema/barrios/barrio.html'
     
     barrio = get_object_or_404(AlarmaVecinal, id=pk)
     viviendas = Vivienda.objects.filter(state="Yes", alarma_vecinal = barrio)
@@ -264,7 +264,7 @@ def barrio_detail(request, pk):
                 vivienda = addform.save(commit=False)
                 vivienda.alarma_vecinal=barrio
                 vivienda.save()
-                return redirect('dashboard:barrio', pk=barrio.pk)
+                return redirect('barrio', pk=barrio.pk)
             else:
                 return HttpResponse("Something wrong with the form")
     context={
@@ -283,16 +283,16 @@ def barrio_detail(request, pk):
     return render(request, template_name, context)
 
 
-@login_required(login_url='dashboard:login')
+@login_required
 def vivienda_delete(request, pk):
     
     vivienda = get_object_or_404(Vivienda, id=pk)
     vivienda.state = "No"
     vivienda.save()
-    return redirect('dashboard:barrio', pk=vivienda.alarma_vecinal.pk)
+    return redirect('barrio', pk=vivienda.alarma_vecinal.pk)
 
 
-@login_required(login_url='dashboard:login')
+@login_required
 def vivienda_detail(request, pk):
     
     vivienda = get_object_or_404(Vivienda, id=pk)
@@ -303,7 +303,7 @@ def vivienda_detail(request, pk):
     f = alarmas.filter(tipo="Fuego")
     s = alarmas.filter(tipo="SOS")
     
-    template_name= 'dashboard/sistema/barrios/vivienda.html'
+    template_name= 'sistema/barrios/vivienda.html'
     addform=NewUsuarioForm()
          
         
@@ -318,7 +318,7 @@ def vivienda_detail(request, pk):
                     filename = default_storage.save('profiles/' + avatar.name, avatar)
                     usuario.avatar = filename
                 usuario.save()
-                return redirect('dashboard:vivienda', pk=vivienda.pk)
+                return redirect('vivienda', pk=vivienda.pk)
             
     context ={
         "vivienda" : vivienda,
@@ -335,11 +335,11 @@ def vivienda_detail(request, pk):
 
 
 
-@login_required(login_url='dashboard:login')
+@login_required
 def barrio_edit(request, pk):
     
     barrio = get_object_or_404(AlarmaVecinal, id=pk)
-    template_name= 'dashboard/sistema/barrios/barrioedit.html'
+    template_name= 'sistema/barrios/barrioedit.html'
     editform=NewAlarmaVecinalForm(instance=barrio)
              
         
@@ -347,7 +347,7 @@ def barrio_edit(request, pk):
             editform = NewAlarmaVecinalForm(request.POST, instance=barrio)
             if editform.is_valid():
                 editform.save()
-                return redirect('dashboard:barrio', pk=barrio.pk)
+                return redirect('barrio', pk=barrio.pk)
             else:
                 return HttpResponse("Something wrong with the form")
             
@@ -359,11 +359,11 @@ def barrio_edit(request, pk):
 
 
 
-@login_required(login_url='dashboard:login')
+@login_required
 def vivienda_edit(request, pk):
     
     vivienda = get_object_or_404(Vivienda, id=pk)
-    template_name= 'dashboard/sistema/barrios/viviendaedit.html'
+    template_name= 'sistema/barrios/viviendaedit.html'
     editform=NewViviendaForm(instance=vivienda)
              
         
@@ -371,7 +371,7 @@ def vivienda_edit(request, pk):
             editform = NewViviendaForm(request.POST, instance=vivienda)
             if editform.is_valid():
                 editform.save()
-                return redirect('dashboard:vivienda', pk=vivienda.pk)
+                return redirect('vivienda', pk=vivienda.pk)
             else:
                 return HttpResponse("Something wrong with the form")
             
@@ -394,7 +394,7 @@ def vivienda_edit(request, pk):
 
 
 
-@login_required(login_url='dashboard:login')
+@login_required
 def users_list(request, pk=None):
     
     
@@ -415,14 +415,14 @@ def users_list(request, pk=None):
         }
         
         
-    template_name= 'dashboard/sistema/generic/usuarios.html'
+    template_name= 'sistema/generic/usuarios.html'
             
     
     return render(request, template_name, context)
 
 
 
-@login_required(login_url='dashboard:login')
+@login_required
 def useradd(request):
     viviendas = Vivienda.objects.filter(state="Yes")
     alarmas = AlarmaVecinal.objects.filter(state="Yes")
@@ -457,7 +457,7 @@ def useradd(request):
                 
                 user.vivienda = adduser.cleaned_data['vivienda']
                 user.save()
-                return redirect('dashboard:usuarios')
+                return redirect('usuarios')
            
         
         
@@ -468,13 +468,13 @@ def useradd(request):
     }
         
         
-    template_name= 'dashboard/sistema/generic/useradd.html'
+    template_name= 'sistema/generic/useradd.html'
             
     
     return render(request, template_name, context)
 
 
-@login_required(login_url='dashboard:login')
+@login_required
 def viviendaadd(request):
     alarmas = AlarmaVecinal.objects.filter(state="Yes")
 
@@ -492,7 +492,7 @@ def viviendaadd(request):
                 vivienda = addvivienda.save(commit=False)
                 vivienda.alarma_vecinal = addvivienda.cleaned_data['alarma_vecinal']              
                 vivienda.save()
-                return redirect('dashboard:useradd')
+                return redirect('useradd')
             else:
                 print(addvivienda.errors)
                 return HttpResponse(f"Something wrong with the form: {addvivienda.errors}")
@@ -505,7 +505,7 @@ def viviendaadd(request):
     }
         
         
-    template_name= 'dashboard/sistema/generic/viviendaadd.html'
+    template_name= 'sistema/generic/viviendaadd.html'
             
     
     return render(request, template_name, context)
@@ -517,7 +517,7 @@ def viviendaadd(request):
 
 
 
-@login_required(login_url='dashboard:login')
+@login_required
 def barrioadd(request):
 
     addbarrio = NewAlarmaVecinalForm()
@@ -529,7 +529,7 @@ def barrioadd(request):
             if new.is_valid():
                 
                 new.save()
-                return redirect('dashboard:viviendaadd')
+                return redirect('viviendaadd')
             else:
                 print(new.errors)
                 return HttpResponse(f"Something wrong with the form: {new.errors}")
@@ -541,18 +541,18 @@ def barrioadd(request):
     }
         
         
-    template_name= 'dashboard/sistema/generic/barrioadd.html'
+    template_name= 'sistema/generic/barrioadd.html'
             
     
     return render(request, template_name, context)
 ############################################################################################################
 ####################################### crud de usuarios dentro de vivievnda ###########################
 
-@login_required(login_url='dashboard:login')
+@login_required
 def usuario_detail(request, pk):
     
     usuario = get_object_or_404(Miembro, id=pk)
-    template_name= 'dashboard/sistema/barrios/usuario.html'
+    template_name= 'sistema/barrios/usuario.html'
     editform=NewUsuarioForm(instance=usuario)
    
             
@@ -564,7 +564,7 @@ def usuario_detail(request, pk):
                 filename = default_storage.save('profiles/' + avatar.name, avatar)
                 usuario.avatar = filename
             usuario.save()
-            return redirect('dashboard:usuario', pk=usuario.pk)
+            return redirect('usuario', pk=usuario.pk)
         
 
             
@@ -576,13 +576,13 @@ def usuario_detail(request, pk):
 
 
 
-@login_required(login_url='dashboard:login')
+@login_required
 def usuario_delete(request, pk):
     
     usuario = get_object_or_404(Miembro, id=pk)
     usuario.state = "No"
     usuario.save()
-    return redirect('dashboard:vivienda', pk=usuario.vivienda.pk)
+    return redirect('vivienda', pk=usuario.vivienda.pk)
 ########################################################################################################################
 
 
