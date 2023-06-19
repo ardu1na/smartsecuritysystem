@@ -42,12 +42,21 @@ class UsuarioAdmin(ImportExportModelAdmin):
     resource_class = MiembroR
     list_display = [ 'get_nombre_completo', 'pk', 'get_edad', 'get_barrio', 'vivienda']
     inlines =  [AlarmaInline,]
+    
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        
+        if not request.user.is_superuser:
+            queryset = queryset.filter(user=request.user)
+        
+        return queryset
+    
+    
 admin.site.register(Miembro, UsuarioAdmin)
-
-
 
 class AlarmAdmin(ImportExportModelAdmin):
     resource_class = AlarmaEventR
+    
 admin.site.register(AlarmaEvent, AlarmAdmin)
 
 

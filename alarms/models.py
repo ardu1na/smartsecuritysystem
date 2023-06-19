@@ -106,20 +106,10 @@ class AlarmaVecinal(models.Model):
     
     
     
-    
-    group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name="barrio", blank=True, null=True)
-    
     def save(self, *args, **kwargs):
         if self.state == False:
             self.deleted_at = today
-            
-        if not self.group: 
-            self.group = Group.objects.create(
-                
-                name = self.nombre.replace(" ", "_"),
-                )
-            self.group.save()
-            
+
         super().save(*args, **kwargs)
 
         
@@ -432,10 +422,5 @@ def post_delete_user(sender, instance, *args, **kwargs):
     if instance.user:
         instance.user.delete()
 
-# ALARMAVECINAL/GROUP
-@receiver(post_delete, sender=AlarmaVecinal)
-def post_delete_group(sender, instance, *args, **kwargs):
-    if instance.group:
-        instance.group.delete()
 
 ###########################################################################
