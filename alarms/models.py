@@ -2,14 +2,9 @@ import uuid
 from datetime import date
 from PIL import Image
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
-
-
-
-############## TODO
-## EN VIVIENDA AÑADIR OPCIONES A PROVINCIA
 
 
 
@@ -97,16 +92,20 @@ class AlarmaVecinal(models.Model):
     
     
     
-    
+    group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name="barrio", blank=True, null=True)
     
     def save(self, *args, **kwargs):
         if self.state == False:
             self.deleted_at = today
             
-        super().save(*args, **kwargs)  
-
-    
-
+        if not self.group: 
+            self.group = Group.objects.create(
+                
+                name = self.nombre.replace(" ", "_"),
+                )
+            self.group.save()
+            
+        super().save(*args, **kwargs)
 
         
     def __str__ (self):
@@ -257,21 +256,6 @@ class Miembro(models.Model):
         
     
 
-        """if self.user.groups == None and self.vivienda.alarma_vecinal:
-            try:
-                group = Group.objects.get(name=self.vivienda.alarma_vecinal.nombre)
-                
-            except:
-                group = Group.objects.create(name=self.vivienda.alarma_vecinal.nombre)
-            
-            user = self.user
-                
-            user.groups.add(group)
-            user.save()
-        
-        super().save(*args, **kwargs) """ 
-        
-        
         
         # prevent collapse hd with images and bad display
         if self.avatar:
