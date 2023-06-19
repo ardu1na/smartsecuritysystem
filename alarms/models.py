@@ -3,7 +3,8 @@ from datetime import date
 from PIL import Image
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 
 
 
@@ -14,6 +15,30 @@ from django.contrib.auth.models import User
 
 
 today = date.today()
+
+
+
+class Pais(models.Model):
+    nombre = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.nombre
+    
+class Provincia(models.Model):
+    nombre = models.CharField(max_length=100)
+   
+    pais = models.ForeignKey(Pais, on_delete=models.CASCADE, related_name="provincias")
+    def __str__(self):
+        return self.nombre
+    
+class Municipio(models.Model):
+    nombre = models.CharField(max_length=100)
+    provincia = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="municipios")
+    
+    def __str__(self):
+        return self.nombre
+    
+
 
 class AlarmaEvent(models.Model):
     
@@ -163,6 +188,10 @@ class AlarmaVecinal(models.Model):
     
     
 class Miembro(models.Model):
+    
+    
+        
+    
     user = models.OneToOneField(
         User,
         null=True, blank=True,
@@ -173,6 +202,7 @@ class Miembro(models.Model):
     
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)   
+
     avatar = models.ImageField(upload_to='profiles/', null=True, blank=True)
 
     vivienda = models.ForeignKey('Vivienda', on_delete=models.CASCADE, related_name="miembros")
@@ -222,10 +252,10 @@ class Miembro(models.Model):
                 is_active = True,
                 is_staff = True,
             )
-            self.id = self.user.id
             self.user.save()
         super().save(*args, **kwargs)
-
+        
+    
 
         """if self.user.groups == None and self.vivienda.alarma_vecinal:
             try:
@@ -311,10 +341,7 @@ class Vivienda(models.Model):
     sin_numero = models.BooleanField(default=False)
     
     departamento = models.CharField(max_length=300, blank=True, null=True, verbose_name="DEPARTAMENTO (opcional)")
-
-    municipio = models.CharField(max_length=300, blank=True, null=True, verbose_name="MUNICIPIO")
-    provincia = models.CharField(max_length=100, null=True, blank=True)
-
+    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE, related_name="viviendas")
     altitud = models.DecimalField(decimal_places=7, max_digits=9, blank=True, null=True,  verbose_name="ALTITUD")
     latitud = models.DecimalField(decimal_places=7, max_digits=9, blank=True, null=True,  verbose_name="LATITUD")
     area = models.CharField(max_length=10, null=True, blank=True)
@@ -388,3 +415,12 @@ class Vivienda(models.Model):
     
     
     
+
+
+
+
+
+@receiver(post_delete, sender=Miembro)
+def post_delete_user(sender, instance, *args, **kwargs):
+    if instance.user: # just in case user is not specified
+        instance.user.delete()

@@ -178,7 +178,6 @@ class NewViviendaForm(ModelForm):
                   
                   'nota',                  
                   'municipio',
-                  'provincia',
                   
                   'altitud',
                   'latitud',
@@ -224,14 +223,6 @@ class NewViviendaForm(ModelForm):
                 }
             ),
             
-            
-            
-            'provincia' : TextInput(attrs={
-                'class':"form-control",
-                'id':"provincia",
-                'placeholder' : "Provincia"
-                }
-            ),
             
             'latitud' : NumberInput(attrs={
                 'class':"form-control",

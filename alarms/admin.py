@@ -49,3 +49,9 @@ admin.site.register(Miembro, UsuarioAdmin)
 class AlarmAdmin(ImportExportModelAdmin):
     resource_class = AlarmaEventR
 admin.site.register(AlarmaEvent, AlarmAdmin)
+
+
+
+admin.site.register(Municipio)
+admin.site.register(Provincia)
+admin.site.register(Pais)
