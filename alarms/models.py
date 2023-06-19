@@ -8,10 +8,11 @@ from django.db.models.signals import post_delete
 
 
 
-
 today = date.today()
 
 
+###########################################################################
+# GEO LOCALIZATION MODELS
 
 class Pais(models.Model):
     nombre = models.CharField(max_length=100)
@@ -32,8 +33,17 @@ class Municipio(models.Model):
     
     def __str__(self):
         return self.nombre
+###########################################################################
+
+
+
+
+
     
 
+###########################################################################
+
+# ALARM EVENTS ALERTS
 
 class AlarmaEvent(models.Model):
     
@@ -69,8 +79,13 @@ class AlarmaEvent(models.Model):
     class Meta:
         get_latest_by = "-datetime"
         ordering = ["datetime"]
+###########################################################################
+
+
 
     
+###########################################################################
+# ALARMAVECINAL - BARRIO
 
 class AlarmaVecinal(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)           
@@ -182,14 +197,18 @@ class AlarmaVecinal(models.Model):
             if alarma.tipo =="Emergencia":
                 e.append(alarma)
         return e
+###########################################################################
+    
+
+
+
     
     
+###########################################################################
+
+## MIEMBRO
     
-    
-class Miembro(models.Model):
-    
-    
-        
+class Miembro(models.Model):        
     
     user = models.OneToOneField(
         User,
@@ -267,10 +286,7 @@ class Miembro(models.Model):
                 offset = ((output_size[0] - image.width) // 2, (output_size[1] - image.height) // 2)
                 background.paste(image, offset)
                 image = background
-            image.save(self.avatar.path)
-            
-            
-            
+            image.save(self.avatar.path)                     
             
         
     @property
@@ -307,12 +323,16 @@ class Miembro(models.Model):
 
     def __str__ (self):
         return self.get_nombre_completo
+###########################################################################
 
  
  
  
  
  
+###########################################################################
+
+## VIVIENDA
         
 class Vivienda(models.Model):    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)   
@@ -337,13 +357,10 @@ class Vivienda(models.Model):
     deleted_at = models.DateField(blank=True, null=True)
 
 
-
     @property
     def get_map(self):
         enlace = f"https://www.google.com/maps/place/{self.calle}+{self.numero},+{self.municipio},+{self.provincia}/"
         return enlace
-
-
 
 
     @property
@@ -396,21 +413,29 @@ class Vivienda(models.Model):
 
     def __str__ (self):
         return self.get_direccion
+###########################################################################
     
     
     
 
 
 
+###########################################################################
 
+##### SIGNALS
 
+## Deleting related things:
+
+# MIEMBRO/USER
 @receiver(post_delete, sender=Miembro)
 def post_delete_user(sender, instance, *args, **kwargs):
     if instance.user:
         instance.user.delete()
 
-
+# ALARMAVECINAL/GROUP
 @receiver(post_delete, sender=AlarmaVecinal)
 def post_delete_group(sender, instance, *args, **kwargs):
     if instance.group:
         instance.group.delete()
+
+###########################################################################
