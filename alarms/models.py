@@ -262,7 +262,7 @@ class Miembro(models.Model):
             
         if not self.user: 
             self.user = User.objects.create_user(
-                username = self.email.split("@")[0],
+                username = self.email,
                 email = self.email,
                 password = "planB",
                 first_name = '',
