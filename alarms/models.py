@@ -406,5 +406,11 @@ class Vivienda(models.Model):
 
 @receiver(post_delete, sender=Miembro)
 def post_delete_user(sender, instance, *args, **kwargs):
-    if instance.user: # just in case user is not specified
+    if instance.user:
         instance.user.delete()
+
+
+@receiver(post_delete, sender=AlarmaVecinal)
+def post_delete_group(sender, instance, *args, **kwargs):
+    if instance.group:
+        instance.group.delete()
