@@ -20,20 +20,30 @@ class ViviendaInline(admin.StackedInline):
     
     
     
-
-    
 class BarrioAdmin(ImportExportModelAdmin):
-    inlines =  [ViviendaInline,]
-    resource_class = AlarmaVecinalR
+    inlines = [ViviendaInline,]
+    exclude = ['deleted_at', 'state']
+    
+    def get_export_resource_class(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            return super().get_export_resource_class(request, *args, **kwargs)
+        else:
+            return None
+    
+    def get_import_resource_class(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            return super().get_import_resource_class(request, *args, **kwargs)
+        else:
+            return None
 
 admin.site.register(AlarmaVecinal, BarrioAdmin)
-
 
 
 class ViviendaAdmin(ImportExportModelAdmin):
     resource_class = ViviendaR
     list_display = [ 'alarma_vecinal', 'get_miembros_string']
     inlines =  [UsuariosInline,]
+    exclude = ['deleted_at', 'state']
     
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -58,7 +68,8 @@ class UsuarioAdmin(ImportExportModelAdmin):
     resource_class = MiembroR
     list_display = [ 'get_nombre_completo', 'pk', 'get_edad', 'get_barrio', 'vivienda']
     inlines =  [AlarmaInline,]
-    
+    exclude = ['deleted_at', 'state']
+
     def get_queryset(self, request): # obtieniendo su propio perfil
         queryset = super().get_queryset(request)
         
