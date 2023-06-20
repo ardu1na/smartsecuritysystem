@@ -32,8 +32,24 @@ admin.site.register(AlarmaVecinal, BarrioAdmin)
 
 class ViviendaAdmin(ImportExportModelAdmin):
     resource_class = ViviendaR
-    list_display = [ 'get_direccion_con_municipio_y_provincia', 'alarma_vecinal', 'get_miembros_string']
+    list_display = [ 'alarma_vecinal', 'get_miembros_string']
     inlines =  [UsuariosInline,]
+    
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        # solo edita y ve su vivienda
+        if not request.user.is_superuser:
+            try:
+                miembro = request.user.miembro
+                vivienda = miembro.vivienda
+                queryset = queryset.filter(id=vivienda.id)
+            except Miembro.DoesNotExist:
+                queryset = queryset.none()
+        
+        return queryset
+
+    
+    
 admin.site.register(Vivienda, ViviendaAdmin)
 
 
@@ -43,7 +59,7 @@ class UsuarioAdmin(ImportExportModelAdmin):
     list_display = [ 'get_nombre_completo', 'pk', 'get_edad', 'get_barrio', 'vivienda']
     inlines =  [AlarmaInline,]
     
-    def get_queryset(self, request):
+    def get_queryset(self, request): # obtieniendo su propio perfil
         queryset = super().get_queryset(request)
         
         if not request.user.is_superuser:
@@ -57,8 +73,21 @@ admin.site.register(Miembro, UsuarioAdmin)
 class AlarmAdmin(ImportExportModelAdmin):
     resource_class = AlarmaEventR
     
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        
+        if not request.user.is_superuser:
+            try:
+                miembro = request.user.miembro
+                queryset = queryset.filter(
+                    miembro__vivienda__alarma_vecinal=miembro.vivienda.alarma_vecinal
+                    ) # obteniendo los eventos de alarma de su vecindad
+            except Miembro.DoesNotExist:
+                queryset = queryset.none()
+        
+        return queryset
+    
 admin.site.register(AlarmaEvent, AlarmAdmin)
-
 
 
 admin.site.register(Municipio)
