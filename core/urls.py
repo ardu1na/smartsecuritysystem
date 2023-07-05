@@ -21,6 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     path('', include('alarms.urls')),
     path('s/', sos, name="sos"), 
     path('e/', emergencia, name="emergencia"), 

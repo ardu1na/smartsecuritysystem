@@ -2,7 +2,7 @@ import uuid
 from datetime import date
 from PIL import Image
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
 
@@ -20,6 +20,9 @@ class Pais(models.Model):
     def __str__(self):
         return self.nombre
     
+    class Meta:
+        verbose_name_plural = "Paises"
+    
 class Provincia(models.Model):
     nombre = models.CharField(max_length=100)
    
@@ -27,12 +30,15 @@ class Provincia(models.Model):
     def __str__(self):
         return self.nombre
     
+    
 class Municipio(models.Model):
     nombre = models.CharField(max_length=100)
     provincia = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name="municipios")
     
     def __str__(self):
         return self.nombre
+
+    
 ###########################################################################
 
 
@@ -79,6 +85,8 @@ class AlarmaEvent(models.Model):
     class Meta:
         get_latest_by = "-datetime"
         ordering = ["datetime"]
+        verbose_name_plural = "Eventos de Alarma"
+        verbose_name = "Evento de alarma"
 ###########################################################################
 
 
@@ -117,7 +125,8 @@ class AlarmaVecinal(models.Model):
         return self.nombre
     
     
-    
+    class Meta:
+        verbose_name_plural = "Alarmas Vecinales"
     
     @property
     def get_n_usuarios(self):

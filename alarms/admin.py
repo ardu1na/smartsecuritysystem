@@ -22,19 +22,8 @@ class ViviendaInline(admin.StackedInline):
     
 class BarrioAdmin(ImportExportModelAdmin):
     inlines = [ViviendaInline,]
-    exclude = ['deleted_at', 'state']
-    
-    def get_export_resource_class(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            return super().get_export_resource_class(request, *args, **kwargs)
-        else:
-            return None
-    
-    def get_import_resource_class(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            return super().get_import_resource_class(request, *args, **kwargs)
-        else:
-            return None
+    exclude = ['deleted_at', 'state']  
+    resource_class = AlarmaVecinalR
 
 admin.site.register(AlarmaVecinal, BarrioAdmin)
 
@@ -66,7 +55,7 @@ admin.site.register(Vivienda, ViviendaAdmin)
 
 class UsuarioAdmin(ImportExportModelAdmin):
     resource_class = MiembroR
-    list_display = [ 'get_nombre_completo', 'pk', 'get_edad', 'get_barrio', 'vivienda']
+    list_display = ['get_nombre_completo', 'get_edad', 'get_barrio', 'vivienda']
     inlines =  [AlarmaInline,]
     exclude = ['deleted_at', 'state']
 
